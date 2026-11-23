@@ -1,15 +1,16 @@
-# dbx-mermaid
+# Mermaid 预览
 
 [![DBX Plugin](https://img.shields.io/badge/DBX-plugin-4c8dff)](https://dbxio.com/cn/docs/plugin-development)
 [![Manifest v1](https://img.shields.io/badge/manifest-v1-informational)](https://github.com/t8y2/dbx/blob/main/plugins/README.md)
 [![Mermaid](https://img.shields.io/badge/mermaid-11.17.2-ff3670)](https://mermaid.js.org/)
-[![License](https://img.shields.io/badge/license-TBD-lightgrey)](#许可证)
+[![Latest release](https://img.shields.io/github/v/release/G3minius/dbx-mermaid?display_name=tag)](https://github.com/G3minius/dbx-mermaid/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-一个运行在 DBX 里的独立 Mermaid 实时编辑器：**左侧写代码，右侧看渲染图**。不依赖数据库查询结果，不访问网络，Mermaid 随插件本地打包。
+简体中文 · [English](README.en.md)
 
-> **状态：MVP 已实现，等待真实 DBX 验收**
-> 工作台、实时渲染、示例、滚轮缩放/拖拽平移/全屏预览、可拖拽分栏、复制、SVG 与 PNG 导出、明暗主题与中英文界面已完成。
-> 真实 DBX 中的 `fileTransfer` 保存、PNG 光栅化 CSP 与全屏快捷键仍需手工复验（`dbx-plugin dev` 不模拟）。
+在 DBX 里写 Mermaid，左边是源码，右边就是图。不用切浏览器，不用装 CLI，也不用把源码贴到任何在线渲染服务。
+
+> **Mermaid 预览（`dbx-mermaid`）** · 独立工作台 · 实时渲染 · 纯前端 · 零权限 · 完全离线
 
 ```mermaid
 flowchart LR
@@ -19,164 +20,98 @@ flowchart LR
   C --> X[复制 / 导出 SVG · PNG]
 ```
 
-## 特性
+## 为什么值得用
 
-- **可拖拽分栏**：左侧 Mermaid 源码编辑器（行号、等宽字体），右侧实时预览；中间 8px 分隔条可拖拽，宽屏左右分、窄屏上下分，方向键 / PageUp/Down / Home/End 可键盘调整，双击或 Enter 复位 44/56。全屏时自动隐藏、退出后比例保留。
-- **实时渲染**：输入后约 300ms 自动更新；`Ctrl/Cmd+Enter` 立即渲染。
-- **内置示例**：Flowchart、Sequence、Class、State、ER、Gantt、Mindmap；默认载入 Christmas flowchart 示例。
-- **画布控制**：滚轮以指针为锚点连续缩放（10%–400%，触控板捏合同路径），`Shift+滚轮` 横移，左键/中键拖拽平移，双击适应；右下四向平移按钮与方向键是拖拽的单点替代（WCAG 2.2 SC 2.5.7）。
-- **缩放/适应**：`Ctrl/Cmd+0` 适应、`Ctrl/Cmd+±` 阶跃缩放、点击百分比回 100%；主题、语言、全屏切换都不重置倍率。
-- **全屏预览**：预览占满插件视图，隐藏编辑器与状态栏；「全屏」按钮或 `Ctrl/Cmd+Shift+F` 进入，`Esc` 或退出按钮退出；纯视图内沉浸态，不依赖浏览器全屏权限。
-- **错误可恢复**：解析失败显示行号与纯文本错误，保留上一次成功图；修复后自动恢复。
-- **安全优先**：`securityLevel: "strict"`、`htmlLabels: false`、源码长度上限、DOMPurify + SVG 安全断言。
-- **离线可用**：Mermaid/DOMPurify 全部打包，不加载 CDN、外部字体或外部图标。
-- **主题跟随**：使用 DBX design tokens，明/暗主题自动切换并重新渲染。
-- **中英文界面**：zh-CN / en；Manifest 本地化只覆盖插件/贡献点元数据，UI 文案由插件自己翻译。
-- **复制与导出**：复制源码；`导出 [SVG] [PNG]` 优先用宿主 `fileTransfer` 保存文件（PNG 为 2× 分辨率、按预览主题铺不透明底色），缺失保存能力或宿主阻断 PNG 光栅化时降级为复制 SVG 源码。PNG 全程纯前端，不引入 Sidecar、headless Chromium 或新依赖。
-- **不持久化**：Manifest `permissions: []`；关闭标签页后源码、缩放倍率与全屏态丢失。
-
-## 环境要求
-
-| 项 | 要求 |
+| 你要完成的事 | Mermaid 预览给你的体验 |
 | --- | --- |
-| Node.js | **22.12.0+**（`dbx-plugin dev` 硬性要求，当前验证机为 24.18.1） |
-| DBX | `>=0.6.0`，Host API `1` |
-| 包管理器 | npm（仓库内提交 `package-lock.json`） |
+| 临时画一张流程图 | DBX 内独立工作台，打开即用，输入后约 300ms 自动渲染 |
+| 从别处粘贴一大段源码 | 自动去 BOM、统一换行为 LF；语法错误直接给出行号并保留上一张成功的图 |
+| 看清图里的细节 | 滚轮以指针为锚点缩放 10%–400%，拖拽平移，双击适应，可切全屏 |
+| 把图交给同事或放进文档 | 复制源码，或导出 SVG / PNG（PNG 为 2× 分辨率、铺预览主题底色） |
+| 在深色界面里看图 | 6 个 Mermaid 内置主题，默认 `auto` 跟随 DBX 明暗外观 |
+| 通过安全与合规审查 | Manifest `permissions: []`，无网络请求、无 CDN、无埋点，渲染结果经 DOMPurify 净化 |
 
-## 快速开始
+## 适合场景
+
+- 需求评审、故障复盘时随手画一张流程图或时序图，直接留在 DBX 工作区里。
+- 写设计文档前先画 ER 图、状态机、类图，再从插件里导出 SVG。
+- 内网或离线环境：不依赖 CDN，Mermaid 与 DOMPurify 随插件本地打包。
+- 需要把「编辑器 + 预览」固定成一套独立布局，而不是在标签页之间来回切。
+
+## 核心能力
+
+- **可拖拽分栏**：左侧是带行号的等宽源码编辑器，右侧实时预览；中间 8px 分隔条可拖拽，宽屏左右分、窄屏上下分。
+- **键盘可达**：分隔条支持方向键、PageUp/Down、Home/End、Enter 与双击复位（44/56）；画布提供四向平移按钮，不依赖鼠标拖拽。
+- **内置示例**：Flowchart、Sequence、Class、State、ER、Gantt、Mindmap 各一份，默认载入 flowchart 示例。
+- **画布手势**：滚轮 / 触控板捏合连续缩放，`Shift+滚轮` 横移，左键或中键拖拽平移，双击适应窗口。
+- **全屏预览**：隐藏编辑器与状态栏，只保留图与工具条；这是插件视图内的沉浸态，不申请浏览器全屏权限。
+- **主题与语言**：界面支持 zh-CN / en；预览主题可选 `auto`（跟随 DBX）、`default`、`forest`、`neutral`、`neo`、`dark`、`neo-dark`。
+- **复制与导出**：复制源码；优先通过宿主 `fileTransfer` 保存 SVG / PNG。宿主缺少保存能力，或阻断 PNG 光栅化时，自动降级为复制 SVG 源码并提示。
+- **错误可恢复**：解析失败只显示纯文本消息、片段与行号，不挂载半成品 SVG，也不清空你正在编辑的源码。
+- **不持久化**：状态全在内存，关闭标签页即丢弃，不写入宿主存储。
+
+### 快捷键
+
+| 操作 | 快捷键 |
+| --- | --- |
+| 立即渲染 | `Ctrl/Cmd + Enter` |
+| 适应窗口 | `Ctrl/Cmd + 0` |
+| 放大 / 缩小 | `Ctrl/Cmd + +` / `Ctrl/Cmd + -` |
+| 进入 / 退出全屏 | `Ctrl/Cmd + Shift + F` / `Esc` |
+| 平移画布 | 方向键（画布聚焦时） |
+| 调整分栏 | 方向键、PageUp/Down、Home/End；Enter 复位 |
+| 编辑器缩进 | `Tab` |
+
+## 安装
+
+### 从 Releases 安装
+
+1. 打开 [Releases](https://github.com/G3minius/dbx-mermaid/releases)，下载 `io.github.g3minius.dbx-mermaid-<version>-universal.dbxp`。
+2. 在 DBX 插件中心 → 设置 → 第三方与开发者选项，允许安装未签名开发包。
+3. 选择本地安装并选中该 `.dbxp`，然后从工作台打开「Mermaid 预览」。
+
+### 自行构建
 
 ```bash
-# 安装依赖
-npm install
-
-# 类型检查
-npm run check
-
-# 单元测试
-npm test
-
-# 生产构建（web/ → ui/，单文件自包含，无动态 chunk）
-npm run build
-npm run verify:bundle   # 校验 ui/assets 只剩一个 JS 入口
-
-# 开发宿主构建（同样内联动态 import；dbx-plugin dev 由 dbx-plugin.toml 触发）
-npm run build:dev
-npm run build:dev:watch
-
-# 仅前端预览（没有 window.dbxPlugin，会显示降级页）
-npm run dev
-```
-
-### 在 DBX 中调试
-
-```bash
-# 浏览器开发宿主（会自动执行 dbx-plugin.toml 中的 build:dev）
-npx @dbx-app/plugin-cli dev --path . --port 5190
-
-# 打包未签名开发包（先生产构建）
-npm run build
+npm ci
+npm run check          # tsc --noEmit
+npm test               # vitest run
+npm run build          # web/ -> ui/，单入口自包含产物
+npm run verify:bundle  # 断言 ui/assets 只有一个 JS，且无动态 import
 npx @dbx-app/plugin-cli package .
 ```
 
-产物为 `dist/<id>-<version>-universal.dbxp`。在 DBX 插件中心 → 设置 → 第三方与开发者选项 → 允许安装未签名开发包，然后安装该 `.dbxp` 即可。
+产物为 `dist/<id>-<version>-universal.dbxp`，安装方式同上。
 
-> **生产包必须自包含**：`npm run build` 与 `npm run build:dev` 都会把 Mermaid / DOMPurify 及全部图表类型的动态 import 内联成**单个 JS 入口**（`vite.config.ts` 的 `inlineDynamicImports: true`）。DBX 的 Web/容器宿主不是 Tauri 运行时，无法使用 `dbx-plugin://` 资源协议；它把入口脚本内联进 `sandbox="allow-scripts"` 的 srcdoc iframe，CSP 为 `script-src 'unsafe-inline' blob:` 且不注入 `<base href>`。此时任何动态 `import()` 都无法解析到插件资源，首次 `import("mermaid")` 会 reject 并显示「渲染引擎加载失败，请重试或重新打开视图」，点「重试」只会重复同一次失败。桌面宿主虽支持按需 chunk，但内联产物同样可用，因此统一使用单入口构建。
->
-> 改完构建配置必须重新 `npm run build`、重新 `dbx-plugin package .`，并在插件中心**递增版本后重装**（宿主按 `id:version` 缓存沙箱文档，旧包不会自动修复）。
+> **必须用 `npm run build` 的产物打包。** 构建把 Mermaid / DOMPurify 和全部图表类型的动态 import 内联成**单个 JS 入口**。DBX 的 Web / 容器宿主不是 Tauri 运行时，它把入口脚本内联进 `sandbox="allow-scripts"` 的 `srcdoc` iframe，CSP 只有 `'unsafe-inline' blob:` 且不注入 `<base href>`；任何按需 chunk 的 `import()` 都无法解析，首次加载会报「渲染引擎加载失败」。详见 [常见问题](#常见问题)。
 
-> **Windows 提示**：部分 `@dbx-app/plugin-cli` 版本在 Windows 上会把项目路径规范化为 `\\?\F:\...`，导致 `ui_build` 中的 npm 命令报 `UNC paths are not supported`。可先手动执行 `npm run build:dev`，临时移除 `dbx-plugin.toml` 的 `[dev]` 段后启动 dev host，或直接在真实 DBX 中验收。该问题属于 CLI 的路径处理，不是插件代码。
+## 开发
 
-> `dbx-plugin dev` 不模拟 `fileTransfer`、桌面主题细节与完整组件 kit；这些必须在真实 DBX 中复验。
-
-### 容器版（Docker / Web 宿主）部署要点
-
-官方镜像 `t8y2/dbx:latest` 的 `CMD` 是 `dbx-web`，`EXPOSE 4224`，内置 `DBX_STATIC_DIR=/app/static`、`DBX_DATA_DIR=/app/data`、`DBX_BACKUP_ROOT=/app/backups`。推荐发布版 compose：
-
-```yaml
-services:
-  dbx:
-    image: t8y2/dbx:latest            # 国内可用 docker.cnb.cool/dbxio.com/dbx:latest
-    pull_policy: always
-    ports:
-      - "4224:4224"
-    environment:
-      DBX_PASSWORD: "<强密码>"        # 生产必填；否则 /api/* 的鉴权行为会随数据库状态变化
-      DBX_PORT: "4224"               # 必须与 ports 的容器侧端口一致
-      DBX_DATA_DIR: "/app/data"      # 插件包解包在 $DBX_DATA_DIR/plugins
-      DBX_BACKUP_ROOT: "/app/backups"
-      DBX_PUBLIC_BASE_PATH: "/"      # 子路径部署时改成 /dbx，并与反向代理前缀一致
-      # DBX_SECRET_KEY_FILE: /run/secrets/dbx_secret_key
-    volumes:
-      - dbx-data:/app/data
-      - dbx-backups:/app/backups
-    # 官方镜像基于 debian:bookworm-slim，不含 curl/wget，故用 bash 的 /dev/tcp 做 TCP 就绪探测；
-    # HTTP 层就绪再由下方的 /api/auth/check 轮询确认。
-    healthcheck:
-      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/4224"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-      start_period: 15s
-    stop_grace_period: 90s
-    restart: unless-stopped
-
-volumes:
-  dbx-data:
-  dbx-backups:
-```
-
-等价的 `docker run`：
+环境要求：Node.js **22.12.0+**、DBX `>=0.6.0`（Host API `1`）、npm。
 
 ```bash
-docker run -d --pull=always --name dbx \
-  -p 4224:4224 \
-  -e DBX_PASSWORD='<强密码>' -e DBX_PORT=4224 \
-  -e DBX_DATA_DIR=/app/data -e DBX_BACKUP_ROOT=/app/backups \
-  -e DBX_PUBLIC_BASE_PATH=/ \
-  -v dbx-data:/app/data -v dbx-backups:/app/backups \
-  --stop-timeout 90 --restart unless-stopped \
-  t8y2/dbx:latest
+npm install
+
+npm run dev             # 只起 Vite，没有 window.dbxPlugin，会显示降级页
+npm run build:dev       # 开发宿主用的构建
+npm run build:dev:watch # 监听构建
+
+# 浏览器开发宿主（会触发 dbx-plugin.toml 里的 build:dev）
+npx @dbx-app/plugin-cli dev --path . --port 5190
 ```
 
-启动初始化与资源加载的四个硬性约束：
+- `npm run dev` 不是插件宿主，看不到真实桥接能力；判断 UI 是否正常请在真实 DBX 或 `dbx-plugin dev` 中看。
+- 提交前顺序固定：`npm run check` → `npm test` → `npm run build` → `npm run verify:bundle`。
+- `ui/`、`dist/` 都是构建产物，不要手改、不要提交。
 
-1. **必须持久化 `/app/data`**：插件解包目录是 `$DBX_DATA_DIR/plugins`。容器重建且卷丢失时，插件中心看起来还在装，但 `GET /api/plugins/<id>/ui` 与 `/ui/<path>` 会 404，表现为「工作台空白 / 渲染引擎加载失败」。
-2. **必须等后端完全就绪再装插件**：`docker compose up -d` 后等 healthcheck 通过，再由插件中心安装 `.dbxp`。数据卷从旧版本升级时，若数据迁移未完成，`auth_middleware` 之后的 `migration_gate` 会让除 `auth/*`、`migration/*`、`ping` 外的所有 API 返回 `423 LOCKED / DATA_MIGRATION_REQUIRED`，其中就包括插件资源读取；此时安装/打开工作台必然失败。先在 Web 界面完成「数据安全升级」向导再继续。
-   ```bash
-   docker compose up -d
-   until curl -fsS http://127.0.0.1:4224/api/auth/check >/dev/null; do sleep 1; done
-   ```
-3. **插件资源走带会话的 API，不是静态文件**：Web 宿主用 `GET /api/plugins/<id>/ui` 与 `/api/plugins/<id>/ui/<path>` 读入口与资源，再内联进 `srcdoc`。这些路由在 `auth_middleware` 之后，只有 `auth/login|setup|check|captcha` 免鉴权，其余一律需要 `dbx_session` Cookie；无会话时实测返回 `401`。反向代理必须透传 `Cookie`，不要改写 `Host`/`Origin`，不要吞掉 `/api/plugins/`，也不要额外注入与之冲突的 `Content-Security-Policy`。HTTPS 反向代理需设 `DBX_WEB_COOKIE_SECURE=1`，否则 `Secure` 标志缺失只是安全降级（不会导致 401）；真正易踩的是 Cookie 的 `Path` 等于 `DBX_PUBLIC_BASE_PATH`——`DBX_PUBLIC_BASE_PATH=/dbx` 时整个 app（含 `/api`）会被 nest 到该前缀，代理必须把同一前缀原样转给容器，否则浏览器不会带上 Cookie，插件资源全部 401。该变量也影响 DBX 自身前端的资源基址（源码构建对应 `VITE_DBX_BASE_PATH=/dbx/`），与本插件 `ui/` 产物无关。
-4. **改包必须递增版本并重装**：宿主按 `<pluginId>:<version>` 缓存沙箱文档（LRU），监听 `dbx:plugins-changed` 才清空。沿用旧版本号时浏览器仍会用缓存里的旧 `index.html` 和旧 chunk 列表，替换 `.dbxp` 也不会生效。`manifest.json` 当前为 `1.0.0`（首个正式版本：可拖拽分栏 + PNG 导出），安装后请关闭旧工作台标签再重新打开。
-
-验收（登录后带 Cookie 执行，或直接看浏览器 Network 面板）：
-
-```bash
-# 入口：返回 { "dataBase64": "...", "contentType": "text/html" }，解码后应只有 1 个 JS + 1 个 CSS 引用
-curl -fsS -b 'dbx_session=<从浏览器 DevTools 复制>' \
-  http://127.0.0.1:4224/api/plugins/io.github.g3minius.dbx-mermaid/ui \
-  | python3 -c 'import sys,json,base64;print(base64.b64decode(json.load(sys.stdin)["dataBase64"]).decode())'
-
-# 单入口 JS：200；浏览器 Network 面板中不应再出现 mermaid.core-*.js 之类的 chunk 请求
-curl -fsS -o /dev/null -w '%{http_code} %{size_download}\n' -b 'dbx_session=<...>' \
-  http://127.0.0.1:4224/api/plugins/io.github.g3minius.dbx-mermaid/ui/assets/index-w9SMrKdj.js
-```
-
-容器内自检包内容（确认没有残留动态 chunk）：
-
-```bash
-unzip -l dist/io.github.g3minius.dbx-mermaid-1.0.0-universal.dbxp | grep 'ui/assets'
-# 应只有 index-<hash>.js 与 style-<hash>.css 两个文件
-```
-
-## 项目结构
+### 项目结构
 
 ```text
 dbx-mermaid/
 ├── manifest.json                 # 插件清单（Manifest v1，仅一个 workbench）
-├── dbx-plugin.toml               # 打包与 dev 配置（dev 使用 build:dev）
+├── dbx-plugin.toml               # 打包与 dev 配置
 ├── assets/plugin.svg             # 插件图标
-├── docs/                         # 设计与实现分析（本地文档）
+├── docs/                         # 容器部署说明等
 ├── web/                          # 源码（不直接打包）
 │   ├── index.html
 │   └── src/
@@ -189,71 +124,73 @@ dbx-mermaid/
 └── .github/workflows/            # 发布流水线
 ```
 
-架构约定：`lib/dbx.ts` 是唯一直接访问 `window.dbxPlugin` 的模块；视图与组件只使用它的窄接口。`lib/mermaid.ts` 负责渲染引擎获取（源码按需 `import()`，构建时全部内联）、strict 配置、parse/render、DOMPurify 与 SVG 安全断言。`lib/splitMath.ts` 与 `lib/raster.ts` 的纯函数可在 Node 环境单测；PNG 光栅化只消费已净化的 SVG，不发起网络请求。
+架构边界：`lib/dbx.ts` 是唯一直接访问 `window.dbxPlugin` 的模块；视图与组件只使用它的窄接口。`lib/mermaid.ts` 负责引擎加载、strict 配置、parse/render 与结果净化；`lib/source.ts`、`lib/export.ts`、`lib/splitMath.ts`、`lib/canvasMath.ts` 等保持纯函数，可在 Node 下直接单测。
 
-> **PNG 与宿主 CSP**：PNG 通过 `data:` → `blob:` → `createImageBitmap(Blob)` 三级解码绕过不同宿主的 `img-src` 差异。容器/Web 宿主可能同时阻断前两条，旧 WebView2 也可能不支持 SVG 的 `createImageBitmap`；此时按钮会降级为复制 SVG 源码并提示改用 SVG 导出，不会产出损坏的 PNG。请在真实 DBX 中确认该宿主是否可直接保存 PNG。
+## 安全设计
 
-## 安全与隐私
+- **零权限**：`manifest.json` 的 `permissions` 为 `[]`，不申请网络、数据库、剪贴板读取或持久化。
+- **离线**：Mermaid、DOMPurify 是 npm 依赖，构建时打包进产物；不加载 CDN、外部字体或外部图标，也没有埋点与远程日志。
+- **源码按不可信输入处理**：
+  - 50,000 字符上限，`maxEdges: 500`；
+  - 拒绝行首 `click` 指令、`javascript:`、`@{ img: ... }`、`%%{init}%%` / `initialize` 覆盖；
+  - Mermaid `securityLevel: "strict"` + `htmlLabels: false` + `suppressErrorRendering`；
+  - 渲染结果先经 DOMPurify（`RETURN_DOM_FRAGMENT`）净化，再过一遍 SVG 断言：禁止事件属性、`<script>` / `foreignObject`，`href` 只允许空或 `#`，`<style>` 内禁止 `javascript:`、`@import` 和非 `#` 的 `url()`。
+- **DOM 写入**：只有通过断言的 SVG fragment 会被挂载，不用 `innerHTML`；错误信息一律 `textContent`。
+- **PNG 不触网**：光栅化只消费已净化的 SVG，canvas 被污染时降级为复制 SVG 源码，不绕过同源策略。
 
-- Manifest `permissions` 为 `[]`：不申请网络、数据库读取、剪贴板读取或持久化权限。
-- 不加载 CDN 脚本、外部字体、外部图标；不包含埋点、崩溃上报或远程日志。
-- 用户粘贴的源码按不可信输入处理：
-  - 50,000 字符上限；`maxEdges: 500`；
-  - 拒绝 `click` 指令、`javascript:` 链接、图片节点语法和 `%%{init}%%` 覆盖；
-  - Mermaid `strict` + `htmlLabels: false`；
-  - DOMPurify SVG 净化 + 最终 SVG 断言（无 `<script>`、事件属性、外部 URL）。
-- 错误信息、源码片段、状态文本只用 `textContent` 写入 DOM。
-- 关闭标签页后内容不保留；不会写入宿主存储。
+## 容器与远程部署
 
-## 验证命令
+插件是纯前端产物（`assets` + `ui`），没有 Sidecar。部署到 Docker / Web 宿主时最容易踩的三件事：
 
-```bash
-npm run check
-npm test
-npm run build
-npm run verify:bundle
-node <dbx-plugin-skill>/scripts/check-project.mjs .
-npx @dbx-app/plugin-cli package .
-```
+1. 必须持久化 `DBX_DATA_DIR`（默认 `/app/data`），插件解包在 `$DBX_DATA_DIR/plugins`；卷丢失会表现成「工作台空白」。
+2. 必须等后端完全就绪再装插件，数据迁移未完成时 API 统一返回 `423 LOCKED`。
+3. 反向代理要透传 `dbx_session` Cookie，并且不要吞掉 `/api/plugins/`。
 
-真实 DBX 手工验收清单：
+完整的 compose 示例、`docker run`、401/423/404 排查与验收命令见 **[容器与远程部署](docs/container-deployment.md)**。
 
-- [ ] 插件中心打开工作台，默认 flowchart 正常显示。
-- [ ] 7 个内置示例均可渲染；切换示例时覆盖确认条生效。
-- [ ] 非法语法显示错误行号并保留上次成功图；修复后恢复。
-- [ ] 明/暗主题、zh-CN/en 切换后重新渲染。
-- [ ] 滚轮缩放（含触控板捏合）指针锚点不漂；拖拽平移、四向按钮、方向键、双击适应均可用。
-- [ ] 缩放/适应/快捷键正常，主题与语言切换后倍率不重置。
-- [ ] 全屏进入/退出（按钮、快捷键、Esc）、焦点归还、深色预览主题下工具条文字可读、窄屏不溢出。
-- [ ] 复制源码成功。
-- [ ] 拖拽分栏（宽屏/窄屏）、键盘调整、双击/Enter 复位、全屏进出后比例保留均正常。
-- [ ] 支持 `fileTransfer` 的宿主保存 SVG 与 PNG 成功；PNG 为 2× 且深色预览主题下文字可读；取消不报错。
-- [ ] 不支持保存或 PNG 光栅化被宿主阻断时，降级为复制 SVG 源码并给出提示。
-- [ ] 安全样本不产生 `<script>`、事件属性或外部资源引用。
-- [ ] **容器版**：等待后端就绪后安装 `1.0.0` 包，Network 面板中插件 UI 只有 1 个 JS + 1 个 CSS 请求，无 `mermaid.core-*.js` 等 chunk 请求。
-- [ ] **容器版**：默认 flowchart 正常渲染；主动点「重试」不再出现「渲染引擎加载失败」。
-- [ ] **容器版**：`docker compose restart dbx` 后（卷保留）重新打开工作台仍可渲染。
+## 常见问题
+
+| 现象 | 原因 / 修法 |
+| --- | --- |
+| 显示「渲染引擎加载失败」，点重试反复失败 | 产物里出现了按需 chunk（`inlineDynamicImports` 被改掉）。恢复单入口 → `npm run build` + `verify:bundle` → 重新打包并递增版本重装 |
+| 首次打开报 `Unable to preload CSS` | `cssCodeSplit` 被打开。设回 `false` 后重新构建 |
+| 打开的是「未知贡献点」降级页 | `WORKBENCH_ID` 与 manifest 贡献点 id 不一致，或 `PLUGIN_ID` 被改动 |
+| 改了 UI 但界面没变 / 换包不生效 | 宿主按 `<pluginId>:<version>` 缓存沙箱文档，必须递增 `manifest.json` 的 `version` 后重装 |
+| `manifest.json contains unknown top-level field(s)` | Manifest v1 不接受自造字段，删掉未声明字段 |
+| `manifest UI entry ... is not covered by [package].include` | `[package].include` 缺 `ui`，或 entry 不在 root 内 |
+| `Package include ui does not exist` | 打包前没执行 `npm run build` |
+| PNG 导出变成「已复制 SVG 源码」 | 宿主缺少 `fileTransfer`，或 CSP 阻断了 PNG 光栅化；改用 SVG 导出即可 |
+| `npm test` 在 `describe()` 报 `Cannot read properties of undefined (reading 'config')` | Vitest 5 + Node 22（Windows）默认线程池问题；`vitest.config.ts` 固定 `pool: "vmThreads"`，不要改 `globals` 或降级依赖 |
+| Windows 上 `vite:esbuild-transpile ... Access is denied` | `%TEMP%` 下的 esbuild 临时文件被锁，与代码无关。把 `TEMP`/`TMP` 指到仓库内目录（如 `.tmp`）后重跑 |
+
+## 已知限制
+
+- **未做真机全量验收**：`fileTransfer` 保存 SVG / 文本与 PNG 二进制、PNG 光栅化在宿主 CSP 下是否可用、桌面 WebView2 与容器 Web 宿主的主题 token、全屏快捷键是否被宿主占用，仍需在真实 DBX 中复验。`dbx-plugin dev` 不模拟这些能力。
+- **不自动剥离 Markdown 围栏**：从 Markdown 复制来的 `` ```mermaid `` 围栏会解析失败，错误提示里会提醒去掉围栏。
+- **不持久化**：关闭标签页后源码、缩放倍率、全屏态全部回到默认。
+- **只用 Mermaid 内置主题**：不注入 `themeVariables`，也不允许源码覆盖渲染配置。
 
 ## 贡献
 
-1. 先读 [AGENTS.md](AGENTS.md)（开发约定、边界、提交规范）与 [Mermaid 插件实现方案分析](docs/mermaid-plugin-analysis.md)。
-2. 从 `main` 拉出短生命周期分支：`feat/<slug>`、`fix/<slug>`、`docs/<slug>`、`chore/<slug>`。
-3. 提交信息遵循 Conventional Commits，例如 `feat(workbench): 支持 SVG 导出`。
-4. 提交前确保 `npm run check`、`npm test`、`npm run build` 全部通过；不要提交 `ui/`、`dist/`、`node_modules/`。
+1. 从 `main` 拉出短生命周期分支：`feat/<slug>`、`fix/<slug>`、`docs/<slug>`、`chore/<slug>`。
+2. 提交信息遵循 Conventional Commits，例如 `feat(workbench): 支持 SVG 导出`。
+3. 改动行为前先补 `web/src/lib/*.test.ts` 里的纯函数用例；手势与换算逻辑必须留在 `lib/`，DOM 事件留在 `components/`。
+4. 提交前确保 `npm run check`、`npm test`、`npm run build`、`npm run verify:bundle` 全部通过；不要提交 `ui/`、`dist/`、`node_modules/`。
 
 ## 相关链接
 
 - [DBX 插件开发文档](https://dbxio.com/cn/docs/plugin-development)
 - [DBX 插件平台协议](https://github.com/t8y2/dbx/blob/main/plugins/README.md)
-- [Mermaid 官方文档](https://mermaid.js.org/)
-- [仓库地址](https://github.com/G3minius/dbx-mermaid)
+- [Mermaid 文档](https://mermaid.js.org/)
+- [Mermaid securityLevel](https://mermaid.js.org/config/usage.html#securitylevel)
+- [Issues](https://github.com/G3minius/dbx-mermaid/issues)
 
 ## 许可证
 
-本仓库尚未包含 `LICENSE` 文件。在明确选定开源许可证之前，代码默认保留所有权利（All rights reserved）。
+[MIT](LICENSE) © 2026 g3minius
 
-第三方依赖 [Mermaid](https://github.com/mermaid-js/mermaid) 使用 MIT 许可证，其声明随构建产物一并分发；[DOMPurify](https://github.com/cure53/DOMPurify) 使用 Apache-2.0 / MPL-2.0 双许可证（以依赖产物中的声明为准）。
+第三方依赖 [Mermaid](https://github.com/mermaid-js/mermaid) 使用 MIT 许可证，[DOMPurify](https://github.com/cure53/DOMPurify) 使用 Apache-2.0 / MPL-2.0 双许可证，声明随构建产物一并分发。
 
 ---
 
-插件 ID：`g3minius.dbx-mermaid` · 发布者：`g3minius`
+插件 ID：`io.github.g3minius.dbx-mermaid` · 发布者：`g3minius`
