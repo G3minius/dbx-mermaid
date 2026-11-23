@@ -1,0 +1,29 @@
+{
+  "name": "dbx-mermaid",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "DBX plugin with a standalone Mermaid editor and live preview workbench.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:dev": "vite build --mode dbx-dev",
+    "build:dev:watch": "vite build --mode dbx-dev --watch",
+    "build:watch": "vite build --watch",
+    "verify:bundle": "node -e \"const fs=require('fs'),p=require('path');const files=fs.readdirSync('ui/assets').filter(f=>f.endsWith('.js'));if(files.length!==1){console.error('FAIL: ui/assets must contain exactly one JS bundle, found '+files.length+': '+files.join(', '));process.exit(1)}const src=fs.readFileSync(p.join('ui/assets',files[0]),'utf8');const bad=['import(','__vitePreload','__vite__mapDeps','</script'].filter(k=>src.includes(k));if(bad.length){console.error('FAIL: bundle contains dynamic-import or srcdoc-unsafe markers: '+bad.join(', '));process.exit(1)}console.log('OK: single self-contained bundle '+files[0]+' ('+(Buffer.byteLength(src)/1048576).toFixed(2)+' MiB), no dynamic imports')\"",
+    "check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "dompurify": "3.4.17",
+    "mermaid": "11.17.2"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "^7.3.7",
+    "vitest": "^5.1.0"
+  }
+}

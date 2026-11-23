@@ -1,0 +1,52 @@
+# 入库内容：web/ 源码与单测、构建配置、manifest.json、dbx-plugin.toml、README、CI。
+# 其余（构建产物、依赖、密钥、本机工具目录）一律不入库；需要恢复时用 ! 白名单显式放行。
+
+# ---- 依赖与包缓存 ----
+node_modules/
+.npm-cache/
+.pnpm-store/
+
+# ---- 构建与打包产物 ----
+# npm run build 产出 ui/；dbx-plugin package 产出 dist/。都由命令重建，不手改、不提交。
+ui/
+dist/
+*.dbxp
+release-candidates.json
+
+# ---- 临时脚手架与缓存 ----
+.tmp/
+.tmp-template/
+*.tsbuildinfo
+.eslintcache
+coverage/
+
+# ---- 密钥与凭据：永不入库 ----
+.dbx-repository-signing-key.env
+*.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# ---- 本地开发文档（只保留在磁盘）----
+AGENTS.md
+docs/mermaid-plugin-analysis.md
+
+# ---- 本机工具目录 ----
+# .dbx-dev/ 可能含明文凭据，打包器也会直接拒绝。
+.workbuddy/
+.dbx-dev/
+
+# ---- 日志 ----
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# ---- 编辑器与系统文件 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
