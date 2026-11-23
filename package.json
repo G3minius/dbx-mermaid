@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "DBX plugin with a standalone Mermaid editor and live preview workbench.",
+  "license": "MIT",
   "engines": {
     "node": ">=22.12.0"
   },
