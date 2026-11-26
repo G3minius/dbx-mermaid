@@ -11,8 +11,15 @@
   --mermaid-danger-surface: rgba(185, 28, 28, 0.08);
   --mermaid-warning: var(--color-warning, #b45309);
   --mermaid-warning-surface: var(--color-warning-muted, rgba(180, 83, 9, 0.09));
-  --mermaid-grid: rgba(120, 120, 130, 0.18);
+  --mermaid-grid: rgba(120, 120, 130, 0.1);
+  /* Hairline: separators are one low-alpha line, never a filled block. */
+  --mermaid-line: rgba(28, 25, 20, 0.09);
+  /* Tint used by hover/pressed states so controls stay transparent at rest. */
+  --mermaid-tint: rgba(28, 25, 20, 0.05);
+  --mermaid-tint-strong: rgba(28, 25, 20, 0.08);
+  --mermaid-shadow: 0 1px 2px rgba(24, 20, 14, 0.05), 0 12px 28px -20px rgba(24, 20, 14, 0.3);
   --mermaid-radius: var(--radius-lg, 14px);
+  --mermaid-radius-pill: 999px;
   --mermaid-font:
     var(--font-sans, "Inter", "Segoe UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", system-ui,
       sans-serif);
@@ -31,7 +38,11 @@
   --mermaid-danger-surface: rgba(248, 113, 113, 0.12);
   --mermaid-warning: var(--color-warning, #fbbf24);
   --mermaid-warning-surface: var(--color-warning-muted, rgba(251, 191, 36, 0.1));
-  --mermaid-grid: rgba(180, 180, 190, 0.14);
+  --mermaid-grid: rgba(180, 180, 190, 0.08);
+  --mermaid-line: rgba(255, 255, 255, 0.1);
+  --mermaid-tint: rgba(255, 255, 255, 0.06);
+  --mermaid-tint-strong: rgba(255, 255, 255, 0.1);
+  --mermaid-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 32px -22px rgba(0, 0, 0, 0.8);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -47,7 +58,11 @@
     --mermaid-danger-surface: rgba(248, 113, 113, 0.12);
     --mermaid-warning: var(--color-warning, #fbbf24);
     --mermaid-warning-surface: var(--color-warning-muted, rgba(251, 191, 36, 0.1));
-    --mermaid-grid: rgba(180, 180, 190, 0.14);
+    --mermaid-grid: rgba(180, 180, 190, 0.08);
+    --mermaid-line: rgba(255, 255, 255, 0.1);
+    --mermaid-tint: rgba(255, 255, 255, 0.06);
+    --mermaid-tint-strong: rgba(255, 255, 255, 0.1);
+    --mermaid-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 32px -22px rgba(0, 0, 0, 0.8);
   }
 }
 
@@ -241,11 +256,12 @@ button {
   z-index: 2;
   min-width: 0;
   min-height: 0;
-  background: var(--mermaid-border);
+  background: var(--mermaid-line);
   background-clip: content-box;
   padding: 0 3px;
   cursor: col-resize;
   touch-action: none;
+  transition: background-color 0.15s ease;
 }
 
 .split__divider::after {
@@ -253,12 +269,13 @@ button {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 4px;
-  height: 28px;
+  width: 3px;
+  height: 26px;
   border-radius: 2px;
   background: var(--mermaid-muted);
-  opacity: 0.55;
+  opacity: 0.4;
   transform: translate(-50%, -50%);
+  transition: opacity 0.15s ease;
 }
 
 /* Keep the global :focus-visible ring: the separator is keyboard-operable. */
@@ -282,8 +299,8 @@ button {
 }
 
 .split__divider[data-orientation="stacked"]::after {
-  width: 28px;
-  height: 4px;
+  width: 26px;
+  height: 3px;
 }
 
 .pane {
@@ -298,24 +315,25 @@ button {
   border-right: 0;
 }
 
+/* A transparent header with one hairline: no filled block, no seam. */
 .pane__head {
   flex: none;
-  height: 40px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 0 12px;
-  border-bottom: 1px solid var(--mermaid-border);
-  background: var(--mermaid-surface);
+  padding: 0 14px;
+  border-bottom: 1px solid var(--mermaid-line);
+  background: transparent;
 }
 
 .pane__title {
   margin: 0;
   color: var(--mermaid-muted);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 650;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -334,18 +352,22 @@ button {
   justify-content: center;
   gap: 6px;
   height: 28px;
-  padding: 0 10px;
+  padding: 0 11px;
   border: 1px solid transparent;
-  border-radius: 7px;
+  border-radius: var(--mermaid-radius-pill);
   background: transparent;
   color: var(--mermaid-muted);
   font-size: 12.5px;
   line-height: 1;
   white-space: nowrap;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .btn:hover:not(:disabled) {
-  background: var(--mermaid-surface);
+  background: var(--mermaid-tint);
   color: var(--mermaid-fg);
 }
 
@@ -355,14 +377,20 @@ button {
 }
 
 .btn--ghost {
-  border-color: var(--mermaid-border);
+  border-color: var(--mermaid-line);
   color: var(--mermaid-fg);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  border-color: var(--mermaid-tint-strong);
+  background: var(--mermaid-tint);
 }
 
 .btn--primary {
   background: var(--mermaid-primary);
   border-color: var(--mermaid-primary);
   color: var(--mermaid-primary-fg);
+  font-weight: 550;
 }
 
 .btn--primary:hover:not(:disabled) {
@@ -372,18 +400,23 @@ button {
 }
 
 .btn--compact {
-  padding: 0 8px;
+  padding: 0 9px;
 }
 
 .select {
   height: 28px;
   max-width: 138px;
-  padding: 0 8px;
-  border: 1px solid var(--mermaid-border);
-  border-radius: 7px;
-  background: var(--mermaid-bg);
+  padding: 0 9px;
+  border: 1px solid var(--mermaid-line);
+  border-radius: var(--mermaid-radius-pill);
+  background: transparent;
   color: var(--mermaid-fg);
   font-size: 12.5px;
+  transition: border-color 0.15s ease;
+}
+
+.select:hover {
+  border-color: var(--mermaid-tint-strong);
 }
 
 /* Preview theme picker: a colour swatch + a native, keyboard-accessible select */
@@ -391,17 +424,18 @@ button {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   height: 28px;
-  padding: 0 7px;
-  border: 1px solid var(--mermaid-border);
-  border-radius: 7px;
-  background: var(--mermaid-bg);
+  padding: 0 8px 0 7px;
+  border: 1px solid var(--mermaid-line);
+  border-radius: var(--mermaid-radius-pill);
+  background: transparent;
   cursor: pointer;
+  transition: border-color 0.15s ease;
 }
 
 .theme-picker:hover {
-  border-color: var(--mermaid-primary);
+  border-color: var(--mermaid-tint-strong);
 }
 
 .theme-picker:focus-within {
@@ -412,10 +446,10 @@ button {
 .theme-picker::after {
   content: "";
   position: absolute;
-  top: 9px;
-  right: 9px;
-  width: 5px;
-  height: 5px;
+  top: 11px;
+  right: 10px;
+  width: 4px;
+  height: 4px;
   border-right: 1.5px solid var(--mermaid-muted);
   border-bottom: 1.5px solid var(--mermaid-muted);
   transform: rotate(45deg);
@@ -425,16 +459,16 @@ button {
 .theme-picker__swatch {
   position: relative;
   flex: none;
-  width: 14px;
-  height: 14px;
-  border: 1px solid rgb(0 0 0 / 0.14);
-  border-radius: 4px;
+  width: 13px;
+  height: 13px;
+  border: 1px solid rgb(0 0 0 / 0.12);
+  border-radius: 50%;
   background: linear-gradient(
     135deg,
     var(--swatch-from, #f5f5f7) 0 50%,
     var(--swatch-to, #2a2b30) 50% 100%
   );
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
 }
 
 .theme-picker__swatch::after {
@@ -442,8 +476,8 @@ button {
   position: absolute;
   top: 4px;
   left: 4px;
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
   border-radius: 50%;
   background: var(--swatch-accent, #0f766e);
 }
@@ -468,20 +502,33 @@ button {
   outline: none;
 }
 
+/* A segmented control: one hairline capsule around borderless buttons. */
 .zoom-controls {
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 1px;
-  border: 1px solid var(--mermaid-border);
-  border-radius: 8px;
-  background: var(--mermaid-bg);
+  gap: 0;
+  padding: 0;
+  border: 1px solid var(--mermaid-line);
+  border-radius: var(--mermaid-radius-pill);
+  background: transparent;
+  overflow: hidden;
+}
+
+.zoom-controls .btn {
+  border-radius: 0;
+  height: 26px;
+  padding: 0 8px;
+}
+
+/* One hairline between segments, none on the outer edge. */
+.zoom-controls > * + * {
+  border-left: 1px solid var(--mermaid-line);
 }
 
 .export-controls {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .export-controls__label {
@@ -495,11 +542,11 @@ button {
 }
 
 .zoom-label {
-  min-width: 48px;
-  height: 24px;
+  min-width: 50px;
+  height: 26px;
   padding: 0 4px;
   border: 0;
-  border-radius: 5px;
+  border-radius: 0;
   background: transparent;
   color: var(--mermaid-muted);
   font-family: var(--mermaid-mono);
@@ -508,7 +555,7 @@ button {
 }
 
 .zoom-label:hover:not(:disabled) {
-  background: var(--mermaid-surface);
+  background: var(--mermaid-tint);
   color: var(--mermaid-fg);
 }
 
@@ -524,8 +571,8 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--mermaid-border);
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--mermaid-line);
   background: var(--mermaid-warning-surface);
   font-size: 12.5px;
 }
@@ -542,23 +589,24 @@ button {
   flex: 1;
   min-height: 0;
   display: flex;
-  background: var(--mermaid-bg);
+  background: transparent;
 }
 
 .editor__gutter {
   flex: none;
   height: 100%;
-  padding: 14px 10px;
+  padding: 16px 10px 16px 14px;
   overflow: hidden;
-  border-right: 1px solid var(--mermaid-border);
-  background: var(--mermaid-surface);
+  border-right: 1px solid var(--mermaid-line);
+  background: transparent;
   color: var(--mermaid-muted);
   font-family: var(--mermaid-mono);
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: 12.5px;
+  line-height: 1.7;
   text-align: right;
   white-space: pre;
   user-select: none;
+  opacity: 0.75;
 }
 
 .editor__input {
@@ -566,7 +614,7 @@ button {
   min-width: 0;
   height: 100%;
   margin: 0;
-  padding: 14px 16px;
+  padding: 16px 18px;
   border: 0;
   outline: none;
   resize: none;
@@ -574,8 +622,8 @@ button {
   background: transparent;
   color: var(--mermaid-fg);
   font-family: var(--mermaid-mono);
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: 12.5px;
+  line-height: 1.7;
   white-space: pre;
   tab-size: 2;
   caret-color: var(--mermaid-primary);
@@ -598,12 +646,20 @@ button {
   --preview-grid: var(--mermaid-grid);
   --preview-fg: var(--mermaid-fg);
   --preview-muted: var(--mermaid-muted);
+  /* Floating controls need their own hairlines/tints: the shell tokens assume
+     the shell background, which a fixed preview theme may not match. */
+  --preview-panel: rgba(255, 255, 255, 0.82);
+  --preview-line: rgba(24, 22, 18, 0.12);
+  --preview-tint: rgba(24, 22, 18, 0.07);
 }
 
 /* A dark preview surface is independent of the DBX shell appearance. */
 .pane--preview[data-preview-surface="dark"] {
   --preview-fg: #f4f4f5;
   --preview-muted: #a1a1aa;
+  --preview-panel: rgba(16, 18, 24, 0.82);
+  --preview-line: rgba(255, 255, 255, 0.16);
+  --preview-tint: rgba(255, 255, 255, 0.1);
 }
 
 .preview {
@@ -652,11 +708,13 @@ button {
   display: grid;
   grid-template-columns: repeat(3, 20px);
   grid-template-rows: repeat(3, 20px);
-  gap: 2px;
+  gap: 1px;
   padding: 6px;
-  border: 1px solid var(--mermaid-border);
-  border-radius: 10px;
-  background: var(--preview-bg);
+  border: 1px solid var(--preview-line);
+  border-radius: 12px;
+  background: var(--preview-panel);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--mermaid-shadow);
 }
 
 .canvas__pan-btn {
@@ -667,17 +725,22 @@ button {
   height: 20px;
   padding: 0;
   border: 0;
-  border-radius: 4px;
+  border-radius: 6px;
   background: transparent;
   color: var(--preview-fg);
   font-size: 12px;
   line-height: 1;
-  transition: transform 0.2s ease;
+  opacity: 0.7;
+  transition:
+    transform 0.18s ease,
+    opacity 0.18s ease,
+    background-color 0.18s ease;
 }
 
 .canvas__pan-btn:hover:not(:disabled) {
-  background: var(--preview-grid);
-  transform: scale(1.05);
+  background: var(--preview-tint);
+  opacity: 1;
+  transform: scale(1.06);
 }
 
 .canvas__pan-btn:active:not(:disabled) {
@@ -749,6 +812,7 @@ button {
   color: var(--preview-fg);
   font-size: 14px;
   font-weight: 620;
+  letter-spacing: -0.01em;
 }
 
 .preview__empty-body {
@@ -772,8 +836,9 @@ button {
   max-height: 42%;
   overflow: auto;
   padding: 10px 14px;
-  border-bottom: 1px solid var(--mermaid-border);
+  border-bottom: 1px solid var(--mermaid-line);
   background: var(--mermaid-danger-surface);
+  backdrop-filter: blur(6px);
 }
 
 .error-banner__head {
@@ -824,15 +889,15 @@ button {
 .error-banner__snippet {
   max-height: 140px;
   margin: 0;
-  padding: 8px 10px;
+  padding: 9px 11px;
   overflow: auto;
-  border: 1px solid var(--mermaid-border);
+  border: 1px solid var(--mermaid-line);
   border-radius: 8px;
-  background: var(--mermaid-surface);
+  background: var(--mermaid-tint);
   color: var(--mermaid-fg);
   font-family: var(--mermaid-mono);
   font-size: 11.5px;
-  line-height: 1.55;
+  line-height: 1.6;
   white-space: pre;
 }
 
@@ -850,11 +915,11 @@ button {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 0 12px;
-  border-top: 1px solid var(--mermaid-border);
-  background: var(--mermaid-surface);
+  padding: 0 14px;
+  border-top: 1px solid var(--mermaid-line);
+  background: transparent;
   color: var(--mermaid-muted);
-  font-size: 12px;
+  font-size: 11.5px;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -918,9 +983,11 @@ button {
 }
 
 .app[data-fullscreen="true"] .pane--preview .pane__head {
-  height: 44px;
+  height: 46px;
   justify-content: center;
   gap: 8px;
+  /* Opaque, because the header sits above the canvas rather than over it. */
+  border-bottom-color: var(--preview-line);
   background: var(--preview-bg);
 }
 
@@ -938,13 +1005,31 @@ button {
   color: var(--preview-fg);
 }
 
+.app[data-fullscreen="true"] .pane--preview .btn:hover:not(:disabled) {
+  background: var(--preview-tint);
+}
+
+.app[data-fullscreen="true"] .pane--preview .btn--ghost {
+  border-color: var(--preview-line);
+}
+
+.app[data-fullscreen="true"] .pane--preview .btn--ghost:hover:not(:disabled) {
+  border-color: var(--preview-line);
+  background: var(--preview-tint);
+}
+
 .app[data-fullscreen="true"] .pane--preview .zoom-label {
   color: var(--preview-muted);
 }
 
 .app[data-fullscreen="true"] .pane--preview .theme-picker,
 .app[data-fullscreen="true"] .pane--preview .zoom-controls {
-  background: var(--preview-bg);
+  border-color: var(--preview-line);
+  background: transparent;
+}
+
+.app[data-fullscreen="true"] .pane--preview .zoom-controls > * + * {
+  border-left-color: var(--preview-line);
 }
 
 .app[data-fullscreen="true"] .pane--preview .theme-picker::after {
