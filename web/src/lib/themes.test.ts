@@ -52,6 +52,20 @@ describe("PREVIEW_THEMES", () => {
       }
     }
   });
+
+  it("keeps the dot grid a whisper so it never competes with the diagram", () => {
+    for (const theme of PREVIEW_THEMES.slice(1)) {
+      const alpha = Number(/([\d.]+)\s*\)$/.exec(theme.grid as string)?.[1]);
+      expect(alpha).toBeGreaterThan(0);
+      expect(alpha).toBeLessThanOrEqual(0.12);
+    }
+  });
+
+  it("never paints a pure white or pure black canvas", () => {
+    for (const theme of PREVIEW_THEMES.slice(1)) {
+      expect(["#ffffff", "#000000"]).not.toContain(theme.canvas);
+    }
+  });
 });
 
 describe("isPreviewThemeId / findPreviewTheme", () => {
@@ -125,8 +139,8 @@ describe("resolvePreviewTheme", () => {
 
 describe("previewBackgroundColor", () => {
   it("uses the fixed theme canvas when one is defined", () => {
-    expect(previewBackgroundColor(resolvePreviewTheme("forest", "dark"))).toBe("#f3f8f0");
-    expect(previewBackgroundColor(resolvePreviewTheme("neo-dark", "light"))).toBe("#1b202b");
+    expect(previewBackgroundColor(resolvePreviewTheme("forest", "dark"))).toBe("#f4f7f2");
+    expect(previewBackgroundColor(resolvePreviewTheme("neo-dark", "light"))).toBe("#0e1014");
   });
 
   it("gives auto an opaque background that follows the surface", () => {

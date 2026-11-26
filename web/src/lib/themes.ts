@@ -53,6 +53,13 @@ const AUTO_SWATCH: ThemeSwatch = {
  * with a canvas colour and dot grid tuned for it, so dark themes never end up
  * with unreadable light-on-light output. Values are design constants, never
  * derived from user input.
+ *
+ * Palette rules (see docs/mermaid-plugin-analysis.md):
+ * - the canvas is a low-contrast paper or ink tint, never pure white/black, so
+ *   the diagram itself stays the only focal point;
+ * - the dot grid is a whisper (alpha 0.06–0.10) and only hints "this pans";
+ * - the swatch accent is a desaturated hue, because the chip is 14px and a
+ *   saturated one reads as an alert rather than a theme.
  */
 export const PREVIEW_THEMES: readonly PreviewTheme[] = [
   {
@@ -69,54 +76,54 @@ export const PREVIEW_THEMES: readonly PreviewTheme[] = [
     labelKey: "themeDefault",
     mermaidTheme: "default",
     surface: "light",
-    canvas: "#f7f6fb",
-    grid: "rgba(108, 92, 152, 0.17)",
-    swatch: { from: "#ececff", to: "#9370db", accent: "#4b3a8f" }
+    canvas: "#f8f7fc",
+    grid: "rgba(100, 90, 140, 0.09)",
+    swatch: { from: "#eee9fb", to: "#b3a4e6", accent: "#6d5bb8" }
   },
   {
     id: "forest",
     labelKey: "themeForest",
     mermaidTheme: "forest",
     surface: "light",
-    canvas: "#f3f8f0",
-    grid: "rgba(78, 118, 68, 0.17)",
-    swatch: { from: "#cde498", to: "#6eaa49", accent: "#2f5d1f" }
+    canvas: "#f4f7f2",
+    grid: "rgba(70, 95, 70, 0.1)",
+    swatch: { from: "#e3eedd", to: "#a8c79a", accent: "#4e7a4e" }
   },
   {
     id: "neutral",
     labelKey: "themeNeutral",
     mermaidTheme: "neutral",
     surface: "light",
-    canvas: "#f8f8f8",
-    grid: "rgba(105, 105, 112, 0.17)",
-    swatch: { from: "#e6e6e6", to: "#8a8a8f", accent: "#3f3f46" }
+    canvas: "#faf9f6",
+    grid: "rgba(88, 80, 70, 0.09)",
+    swatch: { from: "#f3efe7", to: "#c9bca9", accent: "#6b5b4a" }
   },
   {
     id: "neo",
     labelKey: "themeNeo",
     mermaidTheme: "neo",
     surface: "light",
-    canvas: "#f4f7fd",
-    grid: "rgba(78, 110, 172, 0.17)",
-    swatch: { from: "#dbe7ff", to: "#4f7cff", accent: "#1e3a8a" }
+    canvas: "#f5f7fa",
+    grid: "rgba(70, 85, 110, 0.1)",
+    swatch: { from: "#e7edfb", to: "#8fa6f0", accent: "#3b57d6" }
   },
   {
     id: "dark",
     labelKey: "themeDark",
     mermaidTheme: "dark",
     surface: "dark",
-    canvas: "#212125",
-    grid: "rgba(208, 208, 226, 0.14)",
-    swatch: { from: "#3a3a40", to: "#c9c9d2", accent: "#f4f4f5" }
+    canvas: "#14151a",
+    grid: "rgba(200, 205, 225, 0.07)",
+    swatch: { from: "#2b2d36", to: "#c9c9d2", accent: "#a3b1ff" }
   },
   {
     id: "neo-dark",
     labelKey: "themeNeoDark",
     mermaidTheme: "neo-dark",
     surface: "dark",
-    canvas: "#1b202b",
-    grid: "rgba(176, 198, 240, 0.14)",
-    swatch: { from: "#27324a", to: "#7aa2ff", accent: "#e6edff" }
+    canvas: "#0e1014",
+    grid: "rgba(180, 195, 225, 0.06)",
+    swatch: { from: "#1b2334", to: "#7aa2ff", accent: "#7aa2ff" }
   }
 ];
 

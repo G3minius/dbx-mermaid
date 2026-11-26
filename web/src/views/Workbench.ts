@@ -20,6 +20,7 @@ import {
   PREVIEW_THEMES,
   previewBackgroundColor,
   resolvePreviewTheme,
+  type MermaidThemeName,
   type PreviewThemeId
 } from "../lib/themes";
 import { createMermaidCanvas, type CanvasZoomState } from "../components/MermaidCanvas";
@@ -62,6 +63,9 @@ export function mountWorkbench(root: HTMLElement): ViewHandle {
   let lastSampleSource = "";
   let currentZoom = 1;
   let previewThemeId: PreviewThemeId = DEFAULT_PREVIEW_THEME_ID;
+  /** Source and palette of the diagram currently on the canvas. */
+  let lastGoodSource: string | null = null;
+  let renderedPalette: MermaidThemeName | null = null;
   let fullscreen = false;
   let fullscreenTrigger: HTMLElement | null = null;
 
@@ -486,6 +490,37 @@ export function mountWorkbench(root: HTMLElement): ViewHandle {
     queue = queue.then(() => performRender(myRevision)).catch(() => undefined);
   }
 
+  /**
+   * Re-render the last successful diagram when only the palette changed.
+   * Without this, a stale diagram keeps the previous theme's node colors and
+   * can end up unreadable on the new canvas (e.g. light nodes on ink).
+   */
+  async function repaintStaleDiagram(): Promise<void> {
+    if (lastGoodSource === null) {
+      return;
+    }
+    const resolved = resolvePreviewTheme(previewThemeId, getAppearance());
+    if (resolved.mermaidTheme === renderedPalette) {
+      return;
+    }
+    const outcome = await renderMermaid(lastGoodSource, resolved.mermaidTheme);
+    if (disposed || !outcome.ok) {
+      return;
+    }
+    canvas.show(outcome.svg);
+    renderedPalette = resolved.mermaidTheme;
+    updateOverlays();
+    updateActionStates();
+  }
+
+  /** Queue a stale-diagram repaint, but only while an error keeps it on screen. */
+  function scheduleStaleRepaint(): void {
+    if (errorState === null || !canvas.hasSvg()) {
+      return;
+    }
+    queue = queue.then(() => repaintStaleDiagram()).catch(() => undefined);
+  }
+
   async function performRender(myRevision: number): Promise<void> {
     if (disposed || myRevision !== revision) {
       return;
@@ -504,6 +539,8 @@ export function mountWorkbench(root: HTMLElement): ViewHandle {
           lastDurationMs = null;
           errorState = null;
           canvas.clear();
+          lastGoodSource = null;
+          renderedPalette = null;
           setState("empty");
           paintError();
           updateMeta();
@@ -546,6 +583,8 @@ export function mountWorkbench(root: HTMLElement): ViewHandle {
       errorState = null;
       lastDurationMs = outcome.durationMs;
       canvas.show(outcome.svg);
+      lastGoodSource = prepared.source;
+      renderedPalette = resolvedTheme.mermaidTheme;
       setState("ready");
       paintError();
       updateMeta();
@@ -704,6 +743,9 @@ export function mountWorkbench(root: HTMLElement): ViewHandle {
     }
     previewThemeId = value;
     applyPreviewSurface();
+    // A stale diagram keeps the previous palette, which can be unreadable on the
+    // new canvas, so repaint it even though the current source still fails.
+    scheduleStaleRepaint();
     // Keep zoom / fit state: only the SVG is re-rendered.
     requestRender();
   }
@@ -752,6 +794,9 @@ export function mountWorkbench(root: HTMLElement): ViewHandle {
   function handleEnvironmentChange(): void {
     messages = getMessages(getLocale());
     paint();
+    // An `auto` theme resolves to a different Mermaid palette when the host
+    // flips appearance, so a stale diagram needs the same repaint as a switch.
+    scheduleStaleRepaint();
     requestRender();
   }
 
